@@ -24,6 +24,6 @@ def records(table_name):
 @app.route('/<table_name>/<record_id>')
 def record_one(table_name, record_id):
     if db.execute("SELECT null FROM sqlite_master WHERE type = 'table' AND name = ?", (table_name, )).fetchone() != None:
-        return jsonify(db.execute("SELECT * FROM "+table_name).fetchall())
+        return jsonify(db.execute("SELECT * FROM "+table_name + " WHERE id = ?", (record_id, )).fetchall())
     return jsonify({}), 404
 app.run(port=3000)
