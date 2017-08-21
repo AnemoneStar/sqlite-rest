@@ -18,9 +18,12 @@ def index():
     return jsonify(db.execute("SELECT name FROM sqlite_master WHERE type = 'table'").fetchall())
 @app.route('/<table_name>')
 def records(table_name):
-    return jsonify(db.execute("SELECT * FROM "+table_name).fetchall())
+    if db.execute("SELECT null FROM sqlite_master WHERE type = 'table' AND name = ?", (table_name, )).fetchone() != None:
+        return jsonify(db.execute("SELECT * FROM "+table_name).fetchall())
+    return jsonify([])
 @app.route('/<table_name>/<record_id>')
 def record_one(table_name, record_id):
-    return jsonify(db.execute("SELECT * FROM "+table_name+" WHERE id = ?", (record_id,)).fetchone())
-
+    if db.execute("SELECT null FROM sqlite_master WHERE type = 'table' AND name = ?", (table_name, )).fetchone() != None:
+        return jsonify(db.execute("SELECT * FROM "+table_name).fetchall())
+    return jsonify({}), 404
 app.run(port=3000)
